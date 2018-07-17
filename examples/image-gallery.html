@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Vanilla Slider // Image Gallery Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style rel="stylesheet">
+    body { margin: 0; }
+    
+    .gallery-container {
+      display: flex;
+      width: 100%;
+      max-width: 500px;
+      overflow: hidden;
+      border: 2px solid #331b0f;
+      border-radius: 7px;
+      margin: 20px auto;
+    }
+
+    .gallery-container__content {
+      display: flex;
+      flex-flow: row nowrap;
+      transition: all 450ms ease;
+      cursor: -webkit-grab;
+      cursor: grab;
+    }
+    
+    /* When the slider is being interacted with, remove transitions */
+    .gallery-container__content.touch { 
+      transition: none; 
+      cursor: -webkit-grabbing;
+      cursor: grabbing;
+    }
+
+    /* Set the slide size & remove pointer events to prevent accidentally dragging the image */
+    .gallery-slide { width: 100%; pointer-events: none; }
+    .gallery-slide img { display: block; width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+
+  <div class="gallery-container">
+    <div class="gallery-container__content">
+      <div class="gallery-slide"><img src="./img/mountains.jpg" alt=""></div>
+      <div class="gallery-slide"><img src="./img/shadows.jpg" alt=""></div>
+      <div class="gallery-slide"><img src="./img/mountains2.jpg" alt=""></div>
+      <div class="gallery-slide"><img src="./img/petals.jpg" alt=""></div>
+    </div>
+  </div>
+  
+  <script src="./image-gallery.js"></script>
+</body>
+</html>

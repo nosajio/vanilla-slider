@@ -1,4 +1,7 @@
 # Vaniller JS Slider
 
-A super simple dependency-free slideshow class written in Javascript. Example below:
+A super simple dependency-free slideshow. Made for ease of use.
+
+Example ->
+
 

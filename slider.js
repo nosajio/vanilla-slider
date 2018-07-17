@@ -10,9 +10,9 @@ const diffCoords = (a, b) => ([
 ]);
 
 // Return the X value to bring a certain slide index into view
-const originForIndex = n => {
+const originForIndex = (n, parentElement) => {
   if (n === 0) return 0;
-  const totalWidth = document.body.getBoundingClientRect().width;
+  const totalWidth = parentElement.getBoundingClientRect().width;
   return -1 * totalWidth * n;
 }
 
@@ -20,14 +20,14 @@ const originForIndex = n => {
 // go back (-1)
 // stay (0)
 // move ahead (1)
-const changeSlide = xDiff => {
+const changeSlide = (xDiff, parentElement) => {
   if (xDiff === 0) return 0;
   let isNegative = xDiff < 0;
   // Tolerance fraction sets how far items must be dragged relative to the width
   // of the screen before a move should be triggered
-  const toleranceFr = 0.15;
+  const toleranceFr = 0.33;
 
-  const totalWidth = document.body.getBoundingClientRect().width;
+  const totalWidth = parentElement.getBoundingClientRect().width;
   const tolerance = totalWidth * toleranceFr;
   const overTolerance = tolerance - Math.abs(xDiff) <= 0;
 
@@ -83,7 +83,6 @@ export default class Slider extends EventEmitter {
     // Set the width of the slides to be exactly the width of the body
     this._setSlideWidths(el);
     
-    
     // Add the interactivity to the slideshow
     this._attachMoveEvents();
     this._attachWindowEvents();
@@ -112,9 +111,9 @@ export default class Slider extends EventEmitter {
 
 
   _setSlideWidths(el) {
-    const screenWidth = document.body.getBoundingClientRect().width;
+    const parentWidth = this.el.parentElement.getBoundingClientRect().width;
     Array.from(el.children).forEach(slide => {
-      slide.style.width = `${screenWidth}px`;
+      slide.style.width = `${parentWidth}px`;
     });
   }
 
@@ -170,7 +169,7 @@ export default class Slider extends EventEmitter {
    * @param {Number} by 
    */
   _translateFromOrigin(index, by) {
-    const originX = originForIndex(index);
+    const originX = originForIndex(index, this.el.parentElement);
     this._translateSlide(by + originX);
   }
 
@@ -180,7 +179,7 @@ export default class Slider extends EventEmitter {
    */
   _returnToOrigin() {
     const { active } = this.state;
-    const origin = originForIndex(active);
+    const origin = originForIndex(active, this.el.parentElement);
     this._translateSlide(origin);
   }
 
@@ -204,7 +203,7 @@ export default class Slider extends EventEmitter {
     // All the event handlers
     const handleTouchStart = event => {
       this.touchDown = true;
-      touchOrigin = [event.clientX, event.clientY];
+      touchOrigin = event.touches ? [event.touches[0].clientX, event.touches[0].clientY] : [event.clientX, event.clientY];
       this._cssTouchClass(true);
       this.emit('touch', { 
         index: this.state.active,
@@ -215,7 +214,7 @@ export default class Slider extends EventEmitter {
 
     const handleTouchEnd = event => {
       // Decide whether to advance the slideshow or return to original position
-      const changeWeight = changeSlide(this.state.diffX);
+      const changeWeight = changeSlide(this.state.diffX, this.el.parentElement);
       this.updateIndex(this.state.active + changeWeight);
       this._cssTouchClass(false);
       this._returnToOrigin();
@@ -230,7 +229,7 @@ export default class Slider extends EventEmitter {
     const handleTouchMove = event => {
       if (! this.touchDown) return;
       // Calculate how much to move the slide based on cursor movement
-      const movedTo = [event.clientX, event.clientY]
+      const movedTo = event.touches ? [event.touches[0].clientX, event.touches[0].clientY] : [event.clientX, event.clientY];
       const [diffX] = diffCoords(touchOrigin, movedTo);
       this.state.diffX = diffX;
       // In the unlikely event that there was no movement, just return
@@ -238,17 +237,13 @@ export default class Slider extends EventEmitter {
       // Do the moving 
       this._translateFromOrigin(this.state.active, diffX);
     }
+
+    const hasTouch = ('ontouchstart' in window);
     
     // Use built in touch events when possible
-    this.el.addEventListener('touchstart', handleTouchStart);
-    this.el.addEventListener('touchend',   handleTouchEnd);
-
-    // Fake it with mouse events for consistent behaviour between devices
-    this.el.addEventListener('mousedown', handleTouchStart);
-    this.el.addEventListener('mouseup',   handleTouchEnd);
-
-    // Handle the moving of slides
-    this.el.addEventListener('touchmove', handleTouchMove);
-    this.el.addEventListener('mousemove', handleTouchMove);
+    this.el.addEventListener(hasTouch ? 'touchstart'  : 'mousedown', handleTouchStart, true);
+    this.el.addEventListener(hasTouch ? 'touchend'    : 'mouseup',  handleTouchEnd, true);
+    this.el.addEventListener(hasTouch ? 'touchmove'   : 'mousemove', handleTouchMove, true);
+    this.el.addEventListener(hasTouch ? 'touchcancel' : 'mouseleave', handleTouchEnd, true);
   }
 }
