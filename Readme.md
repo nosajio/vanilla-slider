@@ -16,6 +16,6 @@ See examples directory for how to use.
   // Log the active slide on change
   gallery.on('change', e => console.log(e.element));
 
-  // Pause all videos on slide interaction on touch
+  // Log all slides after any interaction
   gallery.on('touch', e => console.log(e.slides));
 ```
