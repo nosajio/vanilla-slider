@@ -7,3 +7,15 @@ A super simple dependency-free slideshow. Made for ease of use.
 
 
 See examples directory for how to use.
+
+## Events
+
+```JS
+  const gallery = new Slider(element);
+  
+  // Log the active slide on change
+  gallery.on('change', e => console.log(e.element));
+
+  // Pause all videos on slide interaction on touch
+  gallery.on('touch', e => console.log(e.slides));
+```
