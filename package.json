@@ -22,7 +22,9 @@
     "url": "https://github.com/nosajio/vanilla-slider/issues"
   },
   "homepage": "https://github.com/nosajio/vanilla-slider#readme",
-  "dependencies": {},
+  "dependencies": {
+    "events": "^3.0.0"
+  },
   "devDependencies": {
     "parcel-bundler": "^1.9.7"
   }
