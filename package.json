@@ -2,13 +2,14 @@
   "name": "vanilla-slider",
   "version": "1.0.0",
   "description": "A super simple dependency-free slideshow. Made for ease of use.",
-  "main": "slider.js",
+  "main": "./dist/slider.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle": "npx parcel ./slider.js",
+    "postinstall": "npm run bundle",
+    "bundle": "npx parcel build ./slider.js --target node",
     "examples": "npx parcel ./examples/image-gallery.html"
   },
   "repository": {
