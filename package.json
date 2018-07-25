@@ -1,6 +1,6 @@
 {
   "name": "vanilla-slider",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A super simple dependency-free slideshow. Made for ease of use.",
   "main": "./dist/slider.js",
   "directories": {
